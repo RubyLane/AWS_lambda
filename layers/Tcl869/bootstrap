@@ -1,0 +1,143 @@
+#!/opt/bin/tclsh8.6
+
+set ::auto_path	{/opt/lib/tcl8.6 /opt/lib}
+
+#puts stderr "cpu flags: [set h [open /proc/cpuinfo]; try {read $h} finally {close $h}]"
+#puts stderr "auto_path: $auto_path"
+#puts stderr "env:\n\t[join [lmap {k v} [array get ::env] {format {%s: "%s"} $k $v}] \n\t]"
+#puts stderr "tm path: [tcl::tm::path list]"
+#puts stderr "/opt/lib: [glob /opt/lib/*]"
+#puts stderr "auto_index:\n\t[join [lmap {k v} [array get ::auto_index] {format {%s: %s} $k $v}] \n\t]"
+
+package require rl_http
+package require rl_json
+interp alias {} json {} ::rl_json::json
+
+# Read env vars
+set handler	$env(_HANDLER)	;# The location to the handler, from the function's configuration. The standard format is file.method, where file is the name of the file without an extension, and method is the name of a method or function that's defined in the file.
+lassign [split $handler .] handler_script function
+set api		$env(AWS_LAMBDA_RUNTIME_API)	;# The host and port of the runtime API.
+
+set api_version	2018-06-01
+set api_url		http://$api/$api_version
+
+try {
+	# Initialize function
+	source [file join $env(LAMBDA_TASK_ROOT) $handler_script.tcl]
+} on error {errmsg options} {
+	# Handle errors
+	#  If an error occurs, call the initialization error API (https://docs.aws.amazon.com/lambda/latest/dg/runtimes-api.html#runtimes-api-initerror) and exit immediately
+	puts stderr "Failed to load function: $errmsg\n[dict get $options -errorinfo]"
+	rl_http instvar h POST $api_url/runtime/init/error -data [json template {
+		{
+			"errorMessage": "Failed to load function.",
+			"errorType":	"InvalidFunctionException"
+		}
+	}]
+	exit 1
+}
+
+
+# Process incoming events in a loop
+while 1 {
+	try {
+		# Get an event <<<
+		# Call the next invocation API (https://docs.aws.amazon.com/lambda/latest/dg/runtimes-api.html#runtimes-api-next) to get the next event. The response body contains the event data. Response headers contain the request ID and other information.
+		while 1 {
+			try {
+				rl_http instvar h GET $api_url/runtime/invocation/next -timeout 120
+			} trap {RL HTTP READ_HEADERS timeout} {} {
+				continue
+			} on ok {} {
+				break
+			}
+		}
+
+		switch -- [$h code] {
+			200 {}
+			403 - 500 {
+				puts stderr "Got [$h code] response to /runtime/invocation/next: [$h body], exiting"
+				exit 1
+			}
+		}
+
+		set event	[$h body]
+
+		foreach {header var} {
+			lambda-runtime-aws-request-id		req_id
+			lambda-runtime-deadline-ms			deadline
+			lambda-runtime-invoked-function-arn	function_arn
+			lambda-runtime-trace-id				trace_id
+			lambda-runtime-client-context		client_context
+			lambda-runtime-cognito-identity		cogito_identity
+		} {
+			if {[dict exists [$h headers] $header]} {
+				set $var	[lindex [dict get [$h headers] $header] 0]
+			} else {
+				unset -nocomplain $var
+			}
+		}
+		#>>>
+
+		# Propagate the tracing header <<<
+		# Get the X-Ray tracing header from the Lambda-Runtime-Trace-Id header in the API response. Set the _X_AMZN_TRACE_ID environment variable with the same value for the X-Ray SDK to use.
+		if {[info exists trace_id]} {
+			set env(_X_AMZN_TRACE_ID)	$trace_id
+		}
+		#>>>
+
+		# Create a context object
+		# Create an object with context information from environment variables and headers in the API response.
+		set context		[json template {
+			{
+				"Lambda-Runtime-Aws-Request-Id":		"~S:req_id",
+				"Lambda-Runtime-Deadline-Ms":			"~S:deadline",
+				"Lambda-Runtime-Invoked-Function-Arn":	"~S:function_arn",
+				"Lambda-Runtime-Trace-Id":				"~S:trace_id",
+				"Lambda-Runtime-Client-Context":		"~S:client_context",
+				"Lambda-Runtime-Cognito-Identity":		"~S:cogito_identity"
+			}
+		}]
+
+		# Invoke the function handler
+		# Pass the event and context object to the handler.
+		set response	[$function $event $context]
+
+		# Handle the response
+		# Call the invocation response API (https://docs.aws.amazon.com/lambda/latest/dg/runtimes-api.html#runtimes-api-response) to post the response from the handler.
+		rl_http instvar h POST $api_url/runtime/invocation/$req_id/response -data $response
+		switch -- [$h code] {
+			202 { # Accepted
+			}
+			400 { # Bad request
+				puts stderr "Got 400 response to invocation response POST: [$h body]"
+			}
+			403 { # Forbidden
+				puts stderr "Got 403 response to invocation response POST: [$h body]"
+			}
+			413 { # Payload too large
+				puts stderr "Got 413 response to invocation response POST: [$h body]"
+			}
+			500 { # Container error
+				puts stderr "Got 500 response to invocation response POST: [$h body]"
+				exit 1
+			}
+		}
+	} on error {errmsg options} {
+		# Handle errors
+		# If an error occurs, call the invocation error API. (https://docs.aws.amazon.com/lambda/latest/dg/runtimes-api.html#runtimes-api-invokeerror)
+		# TODO: return proper sanitized errors
+		puts stderr "Unhandled error processing invocation: [dict get $options -errorinfo]"
+		rl_http instvar h POST $api_url/runtime/invocation/$req_id/error -data [json template {
+			{
+				"errorMessage": "~S:errmsg",
+				"errorType":	"InvalidEventDataException"
+			}
+		}]
+	} finally {
+		# Cleanup
+		# Release unused resources, send data to other services, or perform additional tasks before getting the next event.
+	}
+}
+
+# vim: ft=tcl foldmethod=marker foldmarker=<<<,>>> ts=4 shiftwidth=4
