@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="2560mm"
+   height="1440mm"
+   viewBox="0 0 9070.8661 5102.3622"
+   id="svg12120"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="bootstrap.svg">
+  <defs
+     id="defs12122">
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path4641"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.22114757"
+     inkscape:cx="4173.6837"
+     inkscape:cy="2649.2951"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="2560"
+     inkscape:window-height="1413"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata12125">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,4050)">
+    <rect
+       style="opacity:0.68500001;fill:#ffffff;fill-opacity:0.83333333;stroke:#000000;stroke-width:10.48793316;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4136-7"
+       width="2696.2556"
+       height="2509.1047"
+       x="5807.2852"
+       y="-3550.6331" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:63.35867691px;line-height:125%;font-family:monospace;-inkscape-font-specification:monospace;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="5866.6763"
+       y="-3426.7139"
+       id="text4344"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4346"
+         x="5866.6763"
+         y="-3426.7139">proc scale args {...}</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-3347.5156"
+         id="tspan4348" /><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-3268.3171"
+         id="tspan4350">proc handler {event context} {</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-3189.1189"
+         id="tspan4352">    set name    [json get $event queryStringParameters name]</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-3109.9204"
+         id="tspan4354">    set region  [json get $event stageVariables region]</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-3030.7222"
+         id="tspan4356">    set bucket  [json get $event stageVariables bucket]</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-2951.5237"
+         id="tspan4358" /><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-2872.3254"
+         id="tspan4360">    set bytes [s3 get -region $region -bucket $bucket $path]</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-2793.1272"
+         id="tspan4362">    set pmapf [pixel::jpeg::decodejpeg $bytes]</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-2713.9287"
+         id="tspan4364">    set pmapf [scale -type full -dim 220 -- $pmapf]</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-2634.7305"
+         id="tspan4366">    set webp  [pixel::webp::encode [pixel::pmapf_to_pmap $pmapf] 80]</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-2555.532"
+         id="tspan4368">    s3 upload \</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-2476.3337"
+         id="tspan4370">        -region $region \</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-2397.1353"
+         id="tspan4372">        -bucket $bucket \</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-2317.937"
+         id="tspan4374">        -path   thumb/$name.webp \</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-2238.7388"
+         id="tspan4376">        -data   $webp</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-2159.5403"
+         id="tspan4378" /><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-2080.342"
+         id="tspan4380">    puts stderr &quot;Scaled $name and uploaded thumbnail&quot;</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-2001.1436"
+         id="tspan4382" /><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-1921.9452"
+         id="tspan4384">    return {</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-1842.7468"
+         id="tspan4386">        {</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-1763.5485"
+         id="tspan4388">            &quot;statusCode&quot;: 200, </tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-1684.3501"
+         id="tspan4390">            &quot;headers&quot;: {</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-1605.1517"
+         id="tspan4392">                &quot;Content-Type&quot;: &quot;text/plain&quot;,</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-1525.9535"
+         id="tspan4394">                &quot;Access-Control-Allow-Origin&quot;: &quot;*&quot;</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-1446.7551"
+         id="tspan4396">            },  </tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-1367.5568"
+         id="tspan4398">            &quot;body&quot;: &quot;Processed&quot;</tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-1288.3584"
+         id="tspan4400">        }   </tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-1209.16"
+         id="tspan4402">    }   </tspan><tspan
+         sodipodi:role="line"
+         x="5866.6763"
+         y="-1129.9617"
+         id="tspan4404">} </tspan></text>
+    <g
+       id="g12899"
+       transform="translate(2759.5903,189.91843)">
+      <rect
+         y="-1120.1293"
+         x="3047.6948"
+         height="528.52679"
+         width="2696.2554"
+         id="rect4136-7-2"
+         style="opacity:0.68500001;fill:#ffffff;fill-opacity:0.83333333;stroke:#000000;stroke-width:10.48793316;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text12860"
+         y="-797.08154"
+         x="3832.5291"
+         style="font-style:normal;font-weight:normal;font-size:250px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="-797.08154"
+           x="3832.5291"
+           id="tspan12862"
+           sodipodi:role="line">Bootstrap</tspan></text>
+    </g>
+    <g
+       id="g12904"
+       transform="translate(2759.5903,189.91843)">
+      <rect
+         y="-478.02411"
+         x="3047.6948"
+         height="528.52679"
+         width="2696.2554"
+         id="rect4136-7-2-7"
+         style="opacity:0.68500001;fill:#ffffff;fill-opacity:0.83333333;stroke:#000000;stroke-width:10.48793316;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text12860-3"
+         y="-154.97638"
+         x="3240.5491"
+         style="font-style:normal;font-weight:normal;font-size:250px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="-154.97638"
+           x="3240.5491"
+           id="tspan12862-1"
+           sodipodi:role="line">Language runtime</tspan></text>
+    </g>
+    <g
+       id="g12935"
+       transform="translate(72.349883,452.18675)">
+      <g
+         transform="translate(-3726.5861,-176.35282)"
+         id="g12899-1">
+        <rect
+           style="opacity:0.68500001;fill:#ffffff;fill-opacity:0.83333333;stroke:#000000;stroke-width:10.48793316;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4136-7-2-9"
+           width="1760.2285"
+           height="600.87659"
+           x="3888.7622"
+           y="-1156.3042" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:187.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="3999.8381"
+           y="-946.30316"
+           id="text12860-0"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan12862-5"
+             x="3999.8381"
+             y="-946.30316">Lambda control</tspan><tspan
+             id="tspan12933"
+             sodipodi:role="line"
+             x="3999.8381"
+             y="-711.92816">HTTP server</tspan></text>
+      </g>
+    </g>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:10.27655315;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+       d="M 5800.3737,-677.98117 2009.3404,-655.7447"
+       id="path4632"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:125px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="2256.4119"
+       y="-819.69092"
+       id="text14073"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan14075"
+         x="2256.4119"
+         y="-819.69092">http://$env(AWS_LAMBDA_RUNTIME_API)/2018-06-01</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:125px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="2278.0295"
+       y="-425.19617"
+       id="text14073-6"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan14075-7"
+         x="2278.0295"
+         y="-425.19617">GET /runtime/invocation/next</tspan><tspan
+         sodipodi:role="line"
+         x="2278.0295"
+         y="-268.94617"
+         id="tspan14095">POST /runtime/invocation/$req_id/response</tspan><tspan
+         sodipodi:role="line"
+         x="2278.0295"
+         y="-112.69617"
+         id="tspan14097">POST /runtime/invocation/$req_id/error</tspan></text>
+  </g>
+</svg>

@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="2560mm"
+   height="1440mm"
+   viewBox="0 0 9070.8661 5102.3622"
+   id="svg14706"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="layers2.svg">
+  <defs
+     id="defs14708" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.22114757"
+     inkscape:cx="4535.4331"
+     inkscape:cy="2449.5288"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer2"
+     showgrid="false"
+     inkscape:window-width="2560"
+     inkscape:window-height="1413"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata14711">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,4050)">
+    <g
+       id="g15781">
+      <g
+         transform="translate(969.9406,-117.56877)"
+         id="g15322">
+        <rect
+           style="opacity:0.68500001;fill:#ffffff;fill-opacity:0.83333333;stroke:#000000;stroke-width:10.48793316;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4136-7"
+           width="2696.2556"
+           height="2509.1047"
+           x="180.26338"
+           y="-3806.1184" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:63.35867691px;line-height:125%;font-family:monospace;-inkscape-font-specification:monospace;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="239.6545"
+           y="-3682.1995"
+           id="text4344"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan4346"
+             x="239.6545"
+             y="-3682.1995">proc scale args {...}</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-3603.0012"
+             id="tspan4348" /><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-3523.8027"
+             id="tspan4350">proc handler {event context} {</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-3444.6045"
+             id="tspan4352">    set name    [json get $event queryStringParameters name]</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-3365.406"
+             id="tspan4354">    set region  [json get $event stageVariables region]</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-3286.2078"
+             id="tspan4356">    set bucket  [json get $event stageVariables bucket]</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-3207.0093"
+             id="tspan4358" /><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-3127.811"
+             id="tspan4360">    set bytes [s3 get -region $region -bucket $bucket $path]</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-3048.6128"
+             id="tspan4362">    set pmapf [pixel::jpeg::decodejpeg $bytes]</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-2969.4143"
+             id="tspan4364">    set pmapf [scale -type full -dim 220 -- $pmapf]</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-2890.2161"
+             id="tspan4366">    set webp  [pixel::webp::encode [pixel::pmapf_to_pmap $pmapf] 80]</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-2811.0176"
+             id="tspan4368">    s3 upload \</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-2731.8193"
+             id="tspan4370">        -region $region \</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-2652.6208"
+             id="tspan4372">        -bucket $bucket \</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-2573.4226"
+             id="tspan4374">        -path   thumb/$name.webp \</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-2494.2244"
+             id="tspan4376">        -data   $webp</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-2415.0259"
+             id="tspan4378" /><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-2335.8276"
+             id="tspan4380">    puts stderr &quot;Scaled $name and uploaded thumbnail&quot;</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-2256.6292"
+             id="tspan4382" /><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-2177.4309"
+             id="tspan4384">    return {</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-2098.2324"
+             id="tspan4386">        {</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-2019.0342"
+             id="tspan4388">            &quot;statusCode&quot;: 200, </tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-1939.8358"
+             id="tspan4390">            &quot;headers&quot;: {</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-1860.6375"
+             id="tspan4392">                &quot;Content-Type&quot;: &quot;text/plain&quot;,</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-1781.4392"
+             id="tspan4394">                &quot;Access-Control-Allow-Origin&quot;: &quot;*&quot;</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-1702.2408"
+             id="tspan4396">            },  </tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-1623.0425"
+             id="tspan4398">            &quot;body&quot;: &quot;Processed&quot;</tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-1543.8441"
+             id="tspan4400">        }   </tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-1464.6458"
+             id="tspan4402">    }   </tspan><tspan
+             sodipodi:role="line"
+             x="239.6545"
+             y="-1385.4474"
+             id="tspan4404">} </tspan></text>
+      </g>
+      <g
+         transform="translate(-1458.3023,1844.9219)"
+         id="g15431">
+        <rect
+           style="opacity:0.68500001;fill:#ffffff;fill-opacity:0.83333333;stroke:#000000;stroke-width:10.48793316;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4136-7-2-7-8"
+           width="2696.2554"
+           height="392.87051"
+           x="2608.5063"
+           y="-1332.657" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:212.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="2974.6516"
+           y="-1063.8717"
+           id="text12860-3-2"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan12862-1-60"
+             x="2974.6516"
+             y="-1063.8717">Language runtime</tspan></text>
+      </g>
+      <g
+         transform="translate(-1480.9116,-64.548312)"
+         id="g15561">
+        <rect
+           style="opacity:0.68500001;fill:#ffffff;fill-opacity:0.83333333;stroke:#000000;stroke-width:10.48793316;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4136-7-2-7-8-8"
+           width="2696.2554"
+           height="392.87051"
+           x="2631.1157"
+           y="37.468948" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:212.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="3672.5815"
+           y="306.25424"
+           id="text12860-3-2-9"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan12862-1-60-6"
+             x="3672.5815"
+             y="306.25424">Layer</tspan></text>
+      </g>
+      <g
+         id="g15487-0"
+         transform="translate(-228.3544,-589.8806)">
+        <rect
+           style="opacity:0.68500001;fill:#ffffff;fill-opacity:0.83333333;stroke:#000000;stroke-width:10.48793316;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4136-7-2-7-8-8-7"
+           width="2696.2554"
+           height="392.87051"
+           x="1378.5585"
+           y="-138.88388" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:212.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="2420.0242"
+           y="129.9014"
+           id="text12860-3-2-9-0"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan12862-1-60-6-1"
+             x="2420.0242"
+             y="129.9014">Layer</tspan></text>
+      </g>
+      <g
+         id="g15487-2"
+         transform="translate(-228.3544,-1129.2248)">
+        <rect
+           style="opacity:0.68500001;fill:#ffffff;fill-opacity:0.83333333;stroke:#000000;stroke-width:10.48793316;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4136-7-2-7-8-8-6"
+           width="2696.2554"
+           height="392.87051"
+           x="1378.5585"
+           y="-138.88388" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:212.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="2420.0242"
+           y="129.9014"
+           id="text12860-3-2-9-4"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan12862-1-60-6-5"
+             x="2420.0242"
+             y="129.9014">Layer</tspan></text>
+      </g>
+      <text
+         sodipodi:linespacing="125%"
+         id="text12860-3-2-9-2"
+         y="-168.30919"
+         x="2329.3591"
+         style="font-style:normal;font-weight:normal;font-size:212.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="-168.30919"
+           x="2329.3591"
+           id="tspan12862-1-60-6-0"
+           sodipodi:role="line">. . .</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:125px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="3888.8059"
+       y="-982.47803"
+       id="text16246"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan16248"
+         x="3888.8059"
+         y="-982.47803">.zip</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:125px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="3888.8059"
+       y="-450.58789"
+       id="text16246-3"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan16248-7"
+         x="3888.8059"
+         y="-450.58789">.zip</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:125px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="3888.8059"
+       y="254.82346"
+       id="text16246-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan16248-74"
+         x="3888.8059"
+         y="254.82346">.zip</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2"
+     style="display:inline">
+    <g
+       id="g16761">
+      <rect
+         y="1288.4329"
+         x="5154.3174"
+         height="3526.5249"
+         width="2660.0808"
+         id="rect4136-7-9-9"
+         style="opacity:0.68500001;fill:#ffffff;fill-opacity:0.83333333;stroke:#000000;stroke-width:10.48793316;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text4344-0-3"
+         y="1516.3549"
+         x="5218.2305"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:150px;line-height:125%;font-family:monospace;-inkscape-font-specification:monospace;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           id="tspan16512"
+           y="1516.3549"
+           x="5218.2305"
+           sodipodi:role="line">/lib/</tspan><tspan
+           id="tspan16684"
+           y="1703.8549"
+           x="5218.2305"
+           sodipodi:role="line">    tdom0.8.3/</tspan><tspan
+           id="tspan16686"
+           y="1891.3549"
+           x="5218.2305"
+           sodipodi:role="line">        pkgIndex.tcl</tspan><tspan
+           id="tspan16688"
+           y="2078.855"
+           x="5218.2305"
+           sodipodi:role="line">        tdom.tcl</tspan><tspan
+           id="tspan16690"
+           y="2266.3547"
+           x="5218.2305"
+           sodipodi:role="line">        libtdomstub0.8.3.a</tspan><tspan
+           id="tspan16692"
+           y="2453.8547"
+           x="5218.2305"
+           sodipodi:role="line">        libtdom0.8.3.so</tspan><tspan
+           id="tspan16694"
+           y="2641.3547"
+           x="5218.2305"
+           sodipodi:role="line">    hash0.3/</tspan><tspan
+           id="tspan16696"
+           y="2828.8547"
+           x="5218.2305"
+           sodipodi:role="line">        pkgIndex.tcl</tspan><tspan
+           id="tspan16698"
+           y="3016.3547"
+           x="5218.2305"
+           sodipodi:role="line">        libhash0.3.so</tspan><tspan
+           id="tspan16700"
+           y="3203.8547"
+           x="5218.2305"
+           sodipodi:role="line">    tcl8/</tspan><tspan
+           id="tspan16702"
+           y="3391.3547"
+           x="5218.2305"
+           sodipodi:role="line">        site-tcl/</tspan><tspan
+           id="tspan16704"
+           y="3578.8547"
+           x="5218.2305"
+           sodipodi:role="line">            hmac-0.1.tm</tspan><tspan
+           id="tspan16706"
+           y="3766.3547"
+           x="5218.2305"
+           sodipodi:role="line">            sha1-2.0.3.tm</tspan><tspan
+           id="tspan16708"
+           y="3953.8547"
+           x="5218.2305"
+           sodipodi:role="line">            aws-1.0.tm</tspan><tspan
+           id="tspan16710"
+           y="4141.355"
+           x="5218.2305"
+           sodipodi:role="line">            urlencode-1.0.tm</tspan><tspan
+           id="tspan16712"
+           y="4328.855"
+           x="5218.2305"
+           sodipodi:role="line">            aws</tspan><tspan
+           id="tspan16714"
+           y="4516.355"
+           x="5218.2305"
+           sodipodi:role="line">            aws/</tspan><tspan
+           id="tspan16716"
+           y="4703.855"
+           x="5218.2305"
+           sodipodi:role="line">                s3-1.0.tm</tspan></text>
+      <path
+         inkscape:connector-curvature="0"
+         id="path16242-7"
+         d="M 3866.1967,3320.7466 5114.2321,1313.0374"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         sodipodi:nodetypes="cc" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path16244-5"
+         d="M 3861.6749,3687.0178 5109.7102,4772.2659"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         sodipodi:nodetypes="cc" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Layer 3"
+     style="display:none">
+    <g
+       transform="translate(0,4050)"
+       id="g16276">
+      <g
+         transform="translate(1171.1637,714.45506)"
+         id="g16228">
+        <rect
+           style="opacity:0.68500001;fill:#ffffff;fill-opacity:0.83333333;stroke:#000000;stroke-width:10.48793316;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4136-7-9"
+           width="2696.2556"
+           height="2509.1047"
+           x="3983.1538"
+           y="-3476.0222" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:150px;line-height:125%;font-family:monospace;-inkscape-font-specification:monospace;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="4173.6792"
+           y="-2940.6133"
+           id="text4344-0"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="4173.6792"
+             y="-2940.6133"
+             id="tspan4404-9">/lib/</tspan><tspan
+             sodipodi:role="line"
+             x="4173.6792"
+             y="-2753.1133"
+             id="tspan16210">    libwebp.so</tspan><tspan
+             sodipodi:role="line"
+             x="4173.6792"
+             y="-2565.6133"
+             id="tspan16212">    libpng.so</tspan><tspan
+             sodipodi:role="line"
+             x="4173.6792"
+             y="-2378.1133"
+             id="tspan16214">    .</tspan><tspan
+             sodipodi:role="line"
+             x="4173.6792"
+             y="-2190.6133"
+             id="tspan16216">    .</tspan><tspan
+             sodipodi:role="line"
+             x="4173.6792"
+             y="-2003.1133"
+             id="tspan16218">    .</tspan><tspan
+             sodipodi:role="line"
+             x="4173.6792"
+             y="-1815.6133"
+             id="tspan16220">    Pixel3.5/</tspan><tspan
+             sodipodi:role="line"
+             x="4173.6792"
+             y="-1628.1133"
+             id="tspan16222">        pkgIndex.tcl</tspan><tspan
+             sodipodi:role="line"
+             x="4173.6792"
+             y="-1440.6133"
+             id="tspan16224">        libPixel3.5.so</tspan><tspan
+             sodipodi:role="line"
+             x="4173.6792"
+             y="-1253.1133"
+             id="tspan16226"> </tspan></text>
+      </g>
+      <path
+         inkscape:connector-curvature="0"
+         id="path16242"
+         d="M 3879.7623,-1276.3994 5114.2321,-2736.9626"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path16244"
+         d="m 3870.7186,-887.5188 1238.9916,614.9739"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+  </g>
+</svg>
