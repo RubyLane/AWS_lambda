@@ -43,20 +43,17 @@ while 1 {
 	try {
 		# Get an event <<<
 		# Call the next invocation API (https://docs.aws.amazon.com/lambda/latest/dg/runtimes-api.html#runtimes-api-next) to get the next event. The response body contains the event data. Response headers contain the request ID and other information.
-		while 1 {
-			try {
-				rl_http instvar h GET $api_url/runtime/invocation/next -timeout 120
-			} trap {RL HTTP READ_HEADERS timeout} {} {
-				continue
-			} on ok {} {
-				break
-			}
-		}
+		rl_http instvar h GET $api_url/runtime/invocation/next -timeout {}
 
 		switch -- [$h code] {
 			200 {}
 			403 - 500 {
 				puts stderr "Got [$h code] response to /runtime/invocation/next: [$h body], exiting"
+				exit 1
+			}
+
+			default {
+				puts stderr "Got unexpected HTTP status [$h code] to /runtime/invocation/next, exiting"
 				exit 1
 			}
 		}
@@ -120,6 +117,10 @@ while 1 {
 			}
 			500 { # Container error
 				puts stderr "Got 500 response to invocation response POST: [$h body]"
+				exit 1
+			}
+			default {
+				puts stderr "Got unexpected HTTP status [$h code] to invocation response"
 				exit 1
 			}
 		}
