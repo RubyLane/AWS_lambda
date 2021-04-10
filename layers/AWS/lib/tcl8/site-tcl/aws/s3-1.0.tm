@@ -5,6 +5,9 @@ package require urlencode
 namespace eval s3 {
 	namespace export *
 	namespace ensemble create -prefixes no
+	namespace path {
+		::parse_args
+	}
 
 	variable bucket_regions	{}
 

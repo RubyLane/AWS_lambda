@@ -12,12 +12,22 @@ namespace eval aws {
 	namespace export *
 	namespace ensemble create -prefixes no
 	namespace path {
+		::parse_args
 		::rl_json
 	}
 
 	variable maxrate		50		;# Hz
 	variable ratelimit		50
 	variable last_slowdown	0
+
+	# Helpers <<<
+	proc readfile fn { #<<<
+		set h	[open $fn r]
+		try {read $h} finally {close $h}
+	}
+
+	#>>>
+	# Helpers >>>
 
 	# Ensure that $script is run no more often than $hz / sec
 	proc ratelimit {hz script} { #<<<
@@ -71,6 +81,8 @@ namespace eval aws {
 
 	#>>>
 	proc sigv2 args { #<<<
+		global env
+
 		parse_args::parse_args $args {
 			-aws_id				{}
 			-aws_key			{}
@@ -92,13 +104,25 @@ namespace eval aws {
 		}
 
 		if {![info exists aws_id]} {
-			set aws_id		$::env(AWS_ACCESS_KEY_ID)
+			if {[info exists env(AWS_ACCESS_KEY_ID)]} {
+				set aws_id		$env(AWS_ACCESS_KEY_ID)
+			} else {
+				set aws_id		[json get [role_creds] AccessKeyId]
+			}
 		}
 		if {![info exists aws_key]} {
-			set aws_key		$::env(AWS_SECRET_ACCESS_KEY)
+			if {[info exists env(AWS_SECRET_ACCESS_KEY)]} {
+				set aws_key		$env(AWS_SECRET_ACCESS_KEY)
+			} else {
+				set aws_key		[json get [role_creds] SecretAccessKey]
+			}
 		}
-		if {![info exists aws_token] && [info exists ::env(AWS_SESSION_TOKEN)]} {
-			set aws_token	$::env(AWS_SESSION_TOKEN)
+		if {![info exists aws_token]} {
+			if {[info exists env(AWS_SESSION_TOKEN)]} {
+				set aws_token	$env(AWS_SESSION_TOKEN)
+			} else {
+				set aws_token	[json get [role_creds] Token]
+			}
 		}
 
 		#if {$sig_service eq ""} {set sig_service $service}
@@ -225,14 +249,27 @@ namespace eval aws {
 		}
 
 		if {![info exists aws_id]} {
-			set aws_id		$::env(AWS_ACCESS_KEY_ID)
+			if {[info exists env(AWS_ACCESS_KEY_ID)]} {
+				set aws_id		$env(AWS_ACCESS_KEY_ID)
+			} else {
+				set aws_id		[json get [role_creds] AccessKeyId]
+			}
 		}
 		if {![info exists aws_key]} {
-			set aws_key		$::env(AWS_SECRET_ACCESS_KEY)
+			if {[info exists env(AWS_SECRET_ACCESS_KEY)]} {
+				set aws_key		$env(AWS_SECRET_ACCESS_KEY)
+			} else {
+				set aws_key		[json get [role_creds] SecretAccessKey]
+			}
 		}
-		if {$aws_token eq "" && [info exists ::env(AWS_SESSION_TOKEN)]} {
-			set aws_token	$::env(AWS_SESSION_TOKEN)
+		if {$aws_token eq ""} {
+			if {[info exists env(AWS_SESSION_TOKEN)]} {
+				set aws_token	$env(AWS_SESSION_TOKEN)
+			} else {
+				set aws_token	[json get [role_creds] Token]
+			}
 		}
+
 		if {$sig_service eq ""} {
 			set sig_service	$service
 		}
@@ -630,6 +667,143 @@ namespace eval aws {
 		}
 
 		throw {AWS TOO_MANY_ERRORS} "Too many errors, ran out of patience retrying"
+	}
+
+	#>>>
+	proc identify {} { # Attempt to identify the AWS platform: EC2, Lambda, ECS, or none - not on AWS <<<
+		global env
+
+		if {
+			[file readable time cat /sys/devices/virtual/dmi/id/sys_vendor] &&
+			[readfile /sys/devices/virtual/dmi/id/sys_vendor] eq "Amazon EC2"
+		} {
+			return EC2
+		}
+
+		if {[info exists env(LAMBDA_TASK_ROOT)]} {
+			return Lambda
+		}
+
+		if {
+			[info exists env(AWS_EXECUTION_ENV)]
+		} {
+			switch -exact -- $env(AWS_EXECUTION_ENV) {
+				AWS_ECS_EC2 -
+				AWS_ECS_FARGATE {
+					return ECS
+				}
+			}
+		}
+
+		if {
+			[info exists env(ECS_CONTAINER_METADATA_URI_V4)] ||
+			[info exists env(ECS_CONTAINER_METADATA_URI)] ||
+		} {
+			return ECS
+		}
+
+		return none
+	}
+
+	#>>>
+	variable cache {}
+
+	proc _metadata_req url { #<<<
+		rl_http instvar h GET $base/[string trimleft $path /] -stats_cx AWS
+		if {[$h code] != 200} {
+			throw [list AWS [$h code]] [$h body]
+		}
+		$h body
+	}
+
+	#>>>
+	proc _metadata path { #<<<
+		global env
+
+		if {[aws identify] eq "ECS"} {
+			foreach v {
+				ECS_CONTAINER_METADATA_URI_V4
+				ECS_CONTAINER_METADATA_URI
+			} {
+				if {[info exists env($v)]} {
+					set base	http://$env($v)
+					break
+				}
+			}
+
+			if {![info exists base]} {
+				# Try v2
+				set base	http://169.254.170.2/v2
+			}
+		} else {
+			set base	http://169.254.169.254/latest
+		}
+		_metadata_req $url
+	}
+
+	#>>>
+	proc instance_identity {} { #<<<
+		variable cache
+		if {![dict exists $cache instance_identity]} {
+			dict set cache instance_identity [_metadata dynamic/instance-identity/document]
+		}
+		dict get $cache instance_identity
+	}
+
+	#>>>
+	proc role_creds {} { #<<<
+		global env
+		variable cached_role_creds
+		if {
+			![info exists cached_role_creds] ||
+			[json get $cached_role_creds expires_sec] - [clock seconds] < 60
+		} {
+			#set cached_role_creds	[_metadata meta-data/identity-credentials/ec2/security-credentials/ec2-instance]
+			if {[info exists env(AWS_CONTAINER_CREDENTIALS_RELATIVE_URI)]} {
+				set cached_role_creds	[_metadata_req http://169.254.170.2$env(AWS_CONTAINER_CREDENTIALS_RELATIVE_URI)]
+			} else {
+				set role				[_metadata meta-data/iam/security-credentials]
+				set cached_role_creds	[_metadata meta-data/iam/security-credentials/$role]
+			}
+
+			json set cached_role_creds expires_sec	[clock scan [json get $cached_role_creds Expiration] -timezone :UTC -format {%Y-%m-%dT%H:%M:%SZ}]
+		}
+		set cached_role_creds
+	}
+
+	#>>>
+	proc availability_zone {}	{json get [instance_identity] availabilityZone}
+	proc region {}				{json get [instance_identity] region}
+	proc account_id {}			{json get [instance_identity] accountId}
+	proc instance_id {}			{json get [instance_identity] instanceId}
+	proc image_id {}			{json get [instance_identity] imageId}
+	proc instance_type {}		{json get [instance_identity] instanceType}
+	proc public_ipv4 {}			{_metadata meta-data/public-ipv4}
+	proc local_ipv4 {}			{_metadata meta-data/local-ipv4}
+
+	proc ecs_task {} { # Retrieve the ECS task metadata (if running on ECS / Fargate) <<<
+		global env
+
+		foreach v {
+			ECS_CONTAINER_METADATA_URI_V4
+			ECS_CONTAINER_METADATA_URI
+		} {
+			if {[info exists env($v)]} {
+				set base	http://$env($v)
+				break
+			}
+		}
+
+		if {![info exists base]} {
+			# Try v2
+			set base	http://169.254.170.2/v2
+		}
+
+		rl_http instvar h GET $base/[string trimleft $path /] -stats_cx AWS
+		if {[$h code] != 200} {
+			throw [list AWS [$h code]] [$h body]
+		}
+		$h body
 	}
 
 	#>>>
