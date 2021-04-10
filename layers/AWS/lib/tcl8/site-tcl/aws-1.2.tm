@@ -674,7 +674,7 @@ namespace eval aws {
 		global env
 
 		if {
-			[file readable time cat /sys/devices/virtual/dmi/id/sys_vendor] &&
+			[file readable /sys/devices/virtual/dmi/id/sys_vendor] &&
 			[readfile /sys/devices/virtual/dmi/id/sys_vendor] eq "Amazon EC2"
 		} {
 			return EC2
@@ -697,7 +697,7 @@ namespace eval aws {
 
 		if {
 			[info exists env(ECS_CONTAINER_METADATA_URI_V4)] ||
-			[info exists env(ECS_CONTAINER_METADATA_URI)] ||
+			[info exists env(ECS_CONTAINER_METADATA_URI)]
 		} {
 			return ECS
 		}
@@ -709,7 +709,7 @@ namespace eval aws {
 	variable cache {}
 
 	proc _metadata_req url { #<<<
-		rl_http instvar h GET $base/[string trimleft $path /] -stats_cx AWS
+		rl_http instvar h GET $url -stats_cx AWS
 		if {[$h code] != 200} {
 			throw [list AWS [$h code]] [$h body]
 		}
@@ -738,7 +738,7 @@ namespace eval aws {
 		} else {
 			set base	http://169.254.169.254/latest
 		}
-		_metadata_req $url
+		_metadata_req $base/[string trimleft $path /]
 	}
 
 	#>>>
